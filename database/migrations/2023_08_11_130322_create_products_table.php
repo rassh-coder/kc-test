@@ -19,6 +19,10 @@ class CreateProductsTable extends Migration
             $table->string('name');
             $table->string('description')->nullable();
             $table->float('price');
+            $table->float('rent_4');
+            $table->float('rent_8');
+            $table->float('rent_12');
+            $table->float('rent_24');
             $table->integer('count');
             $table->integer('in_use');
             $table->timestamps();
