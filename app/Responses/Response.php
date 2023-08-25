@@ -2,7 +2,7 @@
 
 namespace App\Responses;
 
-use App\Responses\ResponseInterface;
+use App\Responses\Contracts\ResponseInterface;
 use Illuminate\Http\JsonResponse;
 
 class Response implements ResponseInterface
@@ -19,6 +19,14 @@ class Response implements ResponseInterface
     {
         return response()->json([
             "status" => "error",
+            "message" => $message
+        ], $code);
+    }
+
+    public static function successWithMessage($message): JsonResponse
+    {
+        return response()->json([
+            "status" => "success",
             "message" => $message
         ]);
     }

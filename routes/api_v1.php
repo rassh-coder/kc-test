@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\ProductController;
+use App\Http\Controllers\Api\V1\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('api')->controller(AuthController::class)->group(function () {
@@ -14,6 +15,11 @@ Route::middleware("auth:api")->group(function () {
     Route::controller(ProductController::class)->prefix("/products")->group(function () {
         Route::get("/", "list")->name("ProductList");
         Route::get("/{id}", "show")->name("Product");
-        Route::get("/{id}/rent/{time}", "rent")->name("ProductRent");
+        Route::get("/{id}/rent", "rent")->name("ProductRent");
+        Route::get("/{id}/buy", "buy")->name("ProductRent");
+    });
+
+    Route::controller(UserController::class)->group(function () {
+        Route::get("/me", "me")->name("UserMe");
     });
 });

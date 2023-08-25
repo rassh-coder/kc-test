@@ -19,6 +19,7 @@ class CreateUserTransactionsTable extends Migration
             $table->foreignId('product_id')->references('id')->on('products');
             $table->float('cost');
             $table->string('type');
+            $table->integer("rent_time")->nullable();
             $table->timestamps();
         });
     }

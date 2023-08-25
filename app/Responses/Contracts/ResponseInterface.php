@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Responses;
+namespace App\Responses\Contracts;
 
 interface ResponseInterface
 {
