@@ -13,7 +13,7 @@ class UserProduct extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'product_id', 'expired_at', 'is_rent', 'slug'];
+    protected $fillable = ['user_id', 'product_id', 'expired_at', 'is_rent', 'uuid'];
 
     public function product():BelongsTo
     {

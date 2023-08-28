@@ -3,12 +3,15 @@
 namespace App\Services;
 
 use App\Models\Product;
+use App\Models\User;
 use App\Models\UserProduct;
 use App\Models\UserTransaction;
 use App\Responses\ProductResponse;
+use App\Responses\UserProductResponse;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class ProductService
 {
@@ -23,6 +26,38 @@ class ProductService
         return $this->rentOrBuyHandler();
     }
 
+    public function fetchUserProducts($userId): JsonResponse
+    {
+        $userProducts = UserProduct::where("user_id", $userId)->get();
+        return UserProductResponse::success($userProducts);
+    }
+
+    public function showAndCheckUserProduct($userId, $productId): JsonResponse
+    {
+        if (!$user = User::find($userId)) {
+            return UserProductResponse::error("User is not found", 400);
+        }
+
+        if (!$product = Product::find($productId)) {
+            return UserProductResponse::error("Product is not found", 400);
+        }
+
+        if (!$userProduct = UserProduct::where("user_id", $user->id)->where("product_id", $productId)->first()) {
+            return UserProductResponse::error("You haven't access to this product", 403);
+        }
+
+        if ($userProduct->is_rent && $userProduct->expired_at < date("Y-m-d H:i:s")) {
+            $userProduct->delete();
+            return UserProductResponse::error("Product is expired", 403);
+        }
+
+        if (!$userProduct->uuid) {
+            $userProduct->uuid = Str::uuid();
+            $userProduct->save();
+        }
+
+        return UserProductResponse::successSingle($userProduct);
+    }
 
     private function rentOrBuyHandler(): JsonResponse
     {
@@ -101,6 +136,8 @@ class ProductService
         $userProduct = null,
         $newExpTime = null
     ): JsonResponse {
+        $expTime = $this->type == "rent" ? date("Y-m-d H:i:s", time() + 60 * 60 * $data['time']) : null;
+
         try {
             DB::beginTransaction();
             UserTransaction::create([
@@ -108,6 +145,7 @@ class ProductService
                 "product_id" => $product->id,
                 "cost" => $data['price'],
                 "rent_time" => $data['time'] ?? null,
+                "expired_at" => $expTime,
                 "type" => $this->type
             ]);
             if (isset($userProduct)) {
@@ -120,8 +158,7 @@ class ProductService
                 UserProduct::create([
                     "user_id" => $user->id,
                     "product_id" => $product->id,
-                    "expired_at" =>
-                        $this->type == "rent" ? date("Y-m-d H:i:s", time() + 60 * 60 * $data['time']) : null,
+                    "expired_at" => $expTime,
                     "is_rent" => $this->type == "rent" ?? 1,
                 ]);
                 $this->decrementProduct($user, $product, $user->balance - $data['price'], true);

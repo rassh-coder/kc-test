@@ -19,7 +19,7 @@ class CreateUserProductsTable extends Migration
             $table->foreignId('product_id')->references('id')->on('products');
             $table->dateTimeTz('expired_at')->nullable();
             $table->boolean('is_rent')->default(0);
-            $table->string('slug')->unique()->nullable();
+            $table->uuid("uuid")->unique()->nullable();
             $table->timestamps();
         });
     }

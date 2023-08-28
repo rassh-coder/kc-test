@@ -12,4 +12,14 @@ class UserController extends Controller
     {
         return $service->me();
     }
+
+    public function transaction($id, UserService $service): JsonResponse
+    {
+        $userId = auth()->user()->id;
+        return $service->transaction($userId, $id);
+    }
+    public function transactions(UserService $service): JsonResponse
+    {
+        return $service->transactions();
+    }
 }

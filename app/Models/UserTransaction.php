@@ -10,9 +10,14 @@ class UserTransaction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'product_id', 'cost', 'type', 'rent_time'];
+    protected $fillable = ['user_id', 'product_id', 'cost', 'type', 'rent_time', 'expired_at'];
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function product(): BelongsTo
+    {
+        return $this->belongsTo(Product::class);
     }
 }

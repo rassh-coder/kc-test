@@ -20,6 +20,7 @@ class CreateUserTransactionsTable extends Migration
             $table->float('cost');
             $table->string('type');
             $table->integer("rent_time")->nullable();
+            $table->dateTime("expired_at")->nullable();
             $table->timestamps();
         });
     }

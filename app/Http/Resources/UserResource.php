@@ -18,7 +18,6 @@ class UserResource extends JsonResource
             "id" => $this->id,
             "username" => $this->username,
             "balance" => $this->balance,
-            "user_products" => new UserProductCollection($this->products()->get())
         ];
     }
 }
